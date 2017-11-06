@@ -4,6 +4,7 @@ import no.espenmeidell.ressys.models.ReservableEntity;
 import no.espenmeidell.ressys.models.Reservation;
 import no.espenmeidell.ressys.repositories.ReservableEntityRepository;
 import no.espenmeidell.ressys.repositories.ReservationRepository;
+import no.espenmeidell.ressys.services.ReservationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -26,7 +27,9 @@ public class ResSysApplication {
 	}
 
 	@Bean
-    public CommandLineRunner demo(ReservableEntityRepository entityRepository, ReservationRepository reservationRepository) {
+    public CommandLineRunner demo(ReservableEntityRepository entityRepository,
+                                  ReservationRepository reservationRepository,
+                                  ReservationService reservationService) {
 	    return (args) -> {
             ReservableEntity heinfjord = entityRepository.save(new ReservableEntity("Heinfjord", 25));
             ReservableEntity nico = entityRepository.save(new ReservableEntity("Nico", 8));
@@ -44,7 +47,9 @@ public class ResSysApplication {
                     LocalDate.now().plusDays(10)));
 
             log.info("Using Reservation findAll():");
-            reservationRepository.findAll().forEach(reservation -> log.info(reservation.toString()));
+            reservationService.getAllReservations().forEach(reservation -> log.info(reservation.toString()));
+            log.info("On single date:");
+            reservationService.getReservationsOnDate(LocalDate.now().plusDays(9)).forEach(reservation -> log.info(reservation.toString()));
         };
     }
 }

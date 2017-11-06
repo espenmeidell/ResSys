@@ -7,6 +7,7 @@ import no.espenmeidell.ressys.repositories.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -29,5 +30,10 @@ public class ApplicationService implements ReservableEntityService, ReservationS
     @Override
     public List<Reservation> getAllReservations() {
         return (List<Reservation>) reservationRepo.findAll();
+    }
+
+    @Override
+    public List<Reservation> getReservationsOnDate(LocalDate localDate) {
+        return reservationRepo.findAllByFromDateBeforeAndToDateAfter(localDate.plusDays(1), localDate);
     }
 }
