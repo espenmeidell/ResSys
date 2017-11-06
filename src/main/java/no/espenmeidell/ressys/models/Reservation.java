@@ -1,9 +1,6 @@
 package no.espenmeidell.ressys.models;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -21,6 +18,7 @@ public class Reservation {
     private String name;
     private String phone;
     private String email;
+    @ManyToOne
     private ReservableEntity reservableEntity;
     private int places;
     private LocalDate from;
