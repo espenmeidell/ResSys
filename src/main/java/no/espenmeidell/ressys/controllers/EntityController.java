@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/entity")
@@ -24,8 +26,10 @@ public class EntityController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public List<ReservableEntity> getAllEntities() {
-        return reservableEntityService.getAllEntities();
+    public Map<String, List<ReservableEntity>> getAllEntities() {
+        HashMap<String, List<ReservableEntity>> result = new HashMap();
+        result.put("entities", reservableEntityService.getAllEntities());
+        return result;
     }
 
 }

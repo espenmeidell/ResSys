@@ -7,8 +7,8 @@ import java.util.UUID;
 @Entity
 @Table(
         indexes = {
-                @Index(columnList = "from", name = "from"),
-                @Index(columnList = "to", name = "to")
+                @Index(columnList = "fromDate", name = "fromDate"),
+                @Index(columnList = "toDate", name = "toDate")
         }
 )
 public class Reservation {
@@ -21,20 +21,20 @@ public class Reservation {
     @ManyToOne
     private ReservableEntity reservableEntity;
     private int places;
-    private LocalDate from;
-    private LocalDate to;
+    private LocalDate fromDate;
+    private LocalDate toDate;
 
     protected Reservation() {}
 
-    public Reservation(String name, String phone, String email, ReservableEntity reservableEntity, int places, LocalDate from, LocalDate to) {
+    public Reservation(String name, String phone, String email, ReservableEntity reservableEntity, int places, LocalDate fromDate, LocalDate toDate) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.reservableEntity = reservableEntity;
         this.places = places;
-        this.from = from;
-        this.to = to;
+        this.fromDate = fromDate;
+        this.toDate = toDate;
     }
 
     public UUID getId() {
@@ -85,20 +85,20 @@ public class Reservation {
         this.places = places;
     }
 
-    public LocalDate getFrom() {
-        return from;
+    public LocalDate getFromDate() {
+        return fromDate;
     }
 
-    public void setFrom(LocalDate from) {
-        this.from = from;
+    public void setFromDate(LocalDate fromDate) {
+        this.fromDate = fromDate;
     }
 
-    public LocalDate getTo() {
-        return to;
+    public LocalDate getToDate() {
+        return toDate;
     }
 
-    public void setTo(LocalDate to) {
-        this.to = to;
+    public void setToDate(LocalDate toDate) {
+        this.toDate = toDate;
     }
 
     @Override
@@ -110,8 +110,8 @@ public class Reservation {
                 ", email='" + email + '\'' +
                 ", reservableEntity=" + reservableEntity +
                 ", places=" + places +
-                ", from=" + from +
-                ", to=" + to +
+                ", fromDate=" + fromDate +
+                ", toDate=" + toDate +
                 '}';
     }
 }
