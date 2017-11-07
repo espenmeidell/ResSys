@@ -28,6 +28,14 @@ public class ApplicationService implements ReservableEntityService, ReservationS
     }
 
     @Override
+    public int getNumberOfAvailablePlacesOnDate(ReservableEntity entity, LocalDate date) {
+        return entity.getPlaces() - getReservationsOnDate(date).stream()
+                .filter(r -> r.getReservableEntity().equals(entity))
+                .mapToInt(Reservation::getPlaces)
+                .sum();
+    }
+
+    @Override
     public List<Reservation> getAllReservations() {
         return (List<Reservation>) reservationRepo.findAll();
     }
@@ -35,5 +43,10 @@ public class ApplicationService implements ReservableEntityService, ReservationS
     @Override
     public List<Reservation> getReservationsOnDate(LocalDate localDate) {
         return reservationRepo.findAllByFromDateBeforeAndToDateAfter(localDate.plusDays(1), localDate);
+    }
+
+    @Override
+    public Reservation save(Reservation reservation) {
+        return null;
     }
 }

@@ -7,8 +7,10 @@ import java.util.List;
 
 public interface ReservationService {
 
-    public List<Reservation> getAllReservations();
+    List<Reservation> getAllReservations();
 
-    public List<Reservation> getReservationsOnDate(LocalDate localDate);
+    List<Reservation> getReservationsOnDate(LocalDate localDate);
+
+    Reservation save(Reservation reservation);
 
 }

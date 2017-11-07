@@ -102,6 +102,37 @@ public class Reservation {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Reservation that = (Reservation) o;
+
+        if (places != that.places) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (phone != null ? !phone.equals(that.phone) : that.phone != null) return false;
+        if (email != null ? !email.equals(that.email) : that.email != null) return false;
+        if (reservableEntity != null ? !reservableEntity.equals(that.reservableEntity) : that.reservableEntity != null)
+            return false;
+        if (fromDate != null ? !fromDate.equals(that.fromDate) : that.fromDate != null) return false;
+        return toDate != null ? toDate.equals(that.toDate) : that.toDate == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (phone != null ? phone.hashCode() : 0);
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (reservableEntity != null ? reservableEntity.hashCode() : 0);
+        result = 31 * result + places;
+        result = 31 * result + (fromDate != null ? fromDate.hashCode() : 0);
+        result = 31 * result + (toDate != null ? toDate.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Reservation{" +
                 "id=" + id +

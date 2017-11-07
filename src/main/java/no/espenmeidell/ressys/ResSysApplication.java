@@ -4,6 +4,7 @@ import no.espenmeidell.ressys.models.ReservableEntity;
 import no.espenmeidell.ressys.models.Reservation;
 import no.espenmeidell.ressys.repositories.ReservableEntityRepository;
 import no.espenmeidell.ressys.repositories.ReservationRepository;
+import no.espenmeidell.ressys.services.ReservableEntityService;
 import no.espenmeidell.ressys.services.ReservationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import java.time.LocalDate;
@@ -27,7 +29,9 @@ public class ResSysApplication {
 	}
 
 	@Bean
+    @Profile("!test")
     public CommandLineRunner demo(ReservableEntityRepository entityRepository,
+                                  ReservableEntityService reservableEntityService,
                                   ReservationRepository reservationRepository,
                                   ReservationService reservationService) {
 	    return (args) -> {
@@ -46,10 +50,19 @@ public class ResSysApplication {
                     LocalDate.now().plusDays(5),
                     LocalDate.now().plusDays(10)));
 
+            reservationRepository.save(new Reservation("Noen Andre",
+                    "",
+                    "",
+                    nico,
+                    3,
+                    LocalDate.now().minusDays(5),
+                    LocalDate.now().plusDays(10)));
+
             log.info("Using Reservation findAll():");
             reservationService.getAllReservations().forEach(reservation -> log.info(reservation.toString()));
             log.info("On single date:");
             reservationService.getReservationsOnDate(LocalDate.now().plusDays(9)).forEach(reservation -> log.info(reservation.toString()));
+            System.out.println(reservableEntityService.getNumberOfAvailablePlacesOnDate(nico, LocalDate.now().plusDays(7)));
         };
     }
 }
