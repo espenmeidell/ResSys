@@ -1,10 +1,10 @@
 package no.espenmeidell.ressys;
 
+import no.espenmeidell.ressys.exceptions.OverbookException;
 import no.espenmeidell.ressys.models.ReservableEntity;
 import no.espenmeidell.ressys.models.Reservation;
 import no.espenmeidell.ressys.repositories.ReservableEntityRepository;
 import no.espenmeidell.ressys.repositories.ReservationRepository;
-import no.espenmeidell.ressys.services.ReservableEntityService;
 import no.espenmeidell.ressys.services.ReservationService;
 import org.junit.After;
 import org.junit.Assert;
@@ -17,6 +17,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
@@ -48,17 +50,17 @@ public class ReservationServiceTests {
     }
 
     @Test
-    public void checkGetAllReservations() {
-        Assert.assertEquals(0, reservationService.getAllReservations().size());
+    public void testGetAllReservations() {
+        assertEquals(0, reservationService.getAllReservations().size());
         Reservation r1 = new Reservation("", "", "", cabin1, 1, LocalDate.now(), LocalDate.now().plusDays(1));
         reservationRepository.save(r1);
-        Assert.assertEquals(1, reservationService.getAllReservations().size());
-        Assert.assertEquals(r1, reservationService.getAllReservations().get(0));
+        assertEquals(1, reservationService.getAllReservations().size());
+        assertEquals(r1, reservationService.getAllReservations().get(0));
     }
 
     @Test
-    public void checkGetAllReservationsOnDate() {
-        Assert.assertEquals(0, reservationService.getAllReservations().size());
+    public void testGetAllReservationsOnDate() {
+        assertEquals(0, reservationService.getAllReservations().size());
         reservationRepository.save(new Reservation("",
                 "",
                 "",
@@ -66,9 +68,9 @@ public class ReservationServiceTests {
                 1,
                 LocalDate.of(2017, 12, 10),
                 LocalDate.of(2017, 12, 20)));
-        Assert.assertEquals(0, reservationService.getReservationsOnDate(LocalDate.of(2017, 12, 9)).size());
-        Assert.assertEquals(1, reservationService.getReservationsOnDate(LocalDate.of(2017, 12, 10)).size());
-        Assert.assertEquals(0, reservationService.getReservationsOnDate(LocalDate.of(2017, 12, 20)).size());
+        assertEquals(0, reservationService.getReservationsOnDate(LocalDate.of(2017, 12, 9)).size());
+        assertEquals(1, reservationService.getReservationsOnDate(LocalDate.of(2017, 12, 10)).size());
+        assertEquals(0, reservationService.getReservationsOnDate(LocalDate.of(2017, 12, 20)).size());
         reservationRepository.save(new Reservation("",
                 "",
                 "",
@@ -76,11 +78,75 @@ public class ReservationServiceTests {
                 1,
                 LocalDate.of(2017, 12, 15),
                 LocalDate.of(2017, 12, 25)));
-        Assert.assertEquals(2, reservationService.getReservationsOnDate(LocalDate.of(2017, 12, 15)).size());
-        Assert.assertEquals(1, reservationService.getReservationsOnDate(LocalDate.of(2017, 12, 20)).size());
-        Assert.assertEquals(0, reservationService.getReservationsOnDate(LocalDate.of(2017, 12, 25)).size());
-
+        assertEquals(2, reservationService.getReservationsOnDate(LocalDate.of(2017, 12, 15)).size());
+        assertEquals(1, reservationService.getReservationsOnDate(LocalDate.of(2017, 12, 20)).size());
+        assertEquals(0, reservationService.getReservationsOnDate(LocalDate.of(2017, 12, 25)).size());
     }
+
+    @Test
+    public void testBasicReservationSave() {
+        Reservation r1 = new Reservation("",
+                "",
+                "",
+                cabin1,
+                1,
+                LocalDate.of(2020, 10, 10),
+                LocalDate.of(2020, 10, 25));
+        assertEquals(r1, reservationService.save(r1));
+        assertEquals(1, reservationService.getAllReservations().size());
+    }
+
+    @Test(expected = OverbookException.class)
+    public void testSingleOverbook(){
+        Reservation r1 = new Reservation("",
+                "",
+                "",
+                cabin1,
+                11,
+                LocalDate.of(2020, 10, 10),
+                LocalDate.of(2020, 10, 25));
+        reservationService.save(r1);
+    }
+
+    @Test(expected = OverbookException.class)
+    public void testMultipleOverBook() {
+        for (int i = 0; i < 100; i++) {
+            Reservation r1 = new Reservation("",
+                    "",
+                    "",
+                    cabin1,
+                    1,
+                    LocalDate.of(2020, 10, 10),
+                    LocalDate.of(2020, 10, 25));
+            reservationService.save(r1);
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testPastReservation() {
+        Reservation r1 = new Reservation("",
+                "",
+                "",
+                cabin1,
+                5,
+                LocalDate.of(2010, 10, 10),
+                LocalDate.of(2010, 10, 25));
+        reservationService.save(r1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testEndBeforeStart() {
+        Reservation r1 = new Reservation("",
+                "",
+                "",
+                cabin1,
+                5,
+                LocalDate.of(2020, 10, 10),
+                LocalDate.of(2020, 10, 1));
+        reservationService.save(r1);
+    }
+
+
 
 
 }
